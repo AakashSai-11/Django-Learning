@@ -5,6 +5,7 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404
 from .models import Product
 from .serializers import ProductSerializer
+from .permissions import IsStaffEditorPermission
 
 '''class ProductCreateAPIView(generics.CreateAPIView):
     queryset = Product.objects.all()
@@ -24,9 +25,9 @@ from .serializers import ProductSerializer
 class ProductListCreateAPIView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    authentication_classes = [authentication.SessionAuthentication]
-    permission_classes = [permissions.IsAuthenticated] # IsAuthenticated need permissions where as IsAuthenticatedOrReadOnly allows anyone to list the database but only authenticated ones can create the data
-    
+    authentication_classes = [authentication.SessionAuthentication, authentication.TokenAuthentication]
+    # permission_classes = [permissions.IsAuthenticated] # IsAuthenticated need permissions where as IsAuthenticatedOrReadOnly allows anyone to list the database but only authenticated ones can create the data
+    permission_classes = [IsStaffEditorPermission]
     def perform_create(self,serializer):
         print(serializer.validated_data)
         title = serializer.validated_data.get('title')
